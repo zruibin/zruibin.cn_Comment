@@ -11,7 +11,7 @@ body {
     margin: 0px;
 }
 
-#commentBox textarea {
+.commentBox textarea {
     /*border: 1px solid #F3F3F3;*/
     padding: 10px 5px;
     width: 98%;
@@ -28,13 +28,13 @@ body {
 
 }
 
-#commentBox div {
+.commentBox div {
     height: 40px;
     width: 180px;
     padding: 0px 0px;
 }
 
-#commentBox div input {
+.commentBox div input {
     width: 100%;
     height: 80%;
     border: 1px solid #dcdcdc;
@@ -45,7 +45,7 @@ body {
     padding: 0px 5px;
 }
 
-#commentBox .btn-send {
+.commentBox .btn-send {
     float: right;
     width: 78px;
     /*margin: 10px 0;*/
