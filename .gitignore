@@ -26,4 +26,5 @@ build.zip
 Pods
 
 #Python
+env/
 *.pyc
