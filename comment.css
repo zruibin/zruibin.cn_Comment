@@ -73,8 +73,16 @@ body {
     border-top: 1px solid #eee;
 }
 
-#comment article span {
+.comment_name {
+    font-size: 18px;
     color: #3194d0;
+}
+
+.comment_time {
+    font-size: 15px;
+    color: #999;
+    display:inline-block;
+    padding-top: 10px;
 }
 
 #comment article a {
