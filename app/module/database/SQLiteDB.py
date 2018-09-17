@@ -10,6 +10,8 @@
 from Log import *
 import sqlite3
 
+def dict_factory(cursor, row):
+    return dict((col[0], row[idx]) for idx, col in enumerate(cursor.description))
 
 class SQLiteDBManager(object):  
     ''' mysql 数据库连接池 '''
@@ -34,13 +36,14 @@ class SQLiteDBManager(object):
 
     def setDBPath(self, path):
         self.__conn = sqlite3.connect(path)
+        self.__conn.row_factory = dict_factory
 
     def executeDml(self, strsql):
         self.__conn.execute(strsql)
         self.__conn.commit()
 
     def executeDmlWithArgs(self, strsql, args):
-        self.__conn.executemany(strsql, args)
+        self.__conn.execute(strsql, args)
         self.__conn.commit()
           
     def executeQuery(self, strsql):
@@ -50,7 +53,7 @@ class SQLiteDBManager(object):
         return rows
 
     def executeQueryWithArgs(self, strsql, args):
-        curson = self.__conn.executemany(strsql, args)
+        curson = self.__conn.execute(strsql, args)
         self.__conn.commit()
         rows = curson.fetchall()
         return rows

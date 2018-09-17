@@ -11,10 +11,12 @@
 
 """
 from service.admin import admin
+from service.comment import comment
 
 def registerBlueprint(app):
     """ 注册蓝图，并指定前缀""" 
     app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(comment, url_prefix="/service/comment")
 
     
 
