@@ -26,6 +26,7 @@ from flask_cors import CORS, cross_origin
 from config import *
 import register
 from common.tools import jsonTool
+import Log
 
 
 app = Flask(__name__)
@@ -35,6 +36,10 @@ app.config['ALLOWED_EXTENSIONS'] = Config.ALLOWED_EXTENSIONS
 app.config["JSONIFY_MIMETYPE"] = Config.JSONIFY_MIMETYPE
 # app.config['JSON_AS_ASCII'] = False
 app.config['DEBUG'] = Config.DEBUG
+
+# 设置日志
+Log.setDebug(Config.DEBUG)
+Log.setLogDir(Config.LOG_DIR)
 
 # 注册模块
 register.registerBlueprint(app)

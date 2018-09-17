@@ -8,10 +8,11 @@
 # 
 
 from . import admin
-from Log import Loger
+from Log import *
 
 @admin.route('/')
 def index():                         
         #  print'__name__',__name__
+        # LogE("Admin_TAG", "error----", __file__)
         Loger.error("Admin_TAG", "error----", __file__)
         return '<h1>Hello zruibin, From Service Admin!</h1>'

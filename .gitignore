@@ -28,3 +28,4 @@ Pods
 #Python
 env/
 *.pyc
+logs/
