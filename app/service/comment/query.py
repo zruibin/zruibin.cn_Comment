@@ -32,8 +32,9 @@ def __queryComment(articleUUID, index):
     dataList = None
 
     querySQL = """SELECT uuid, article_uuid, content, nickname, time 
-                FROM comment WHERE article_uuid=%s 
+                FROM comment WHERE article_uuid='%s' 
                 ORDER BY time DESC LIMIT %s OFFSET %s""" % (articleUUID, str(Config.PAGE_OF_SIZE), index)
+    # print querySQL
     dbManager = SQLiteDBManager.shareInstanced()
     try: 
         dataList = dbManager.executeQuery(querySQL)

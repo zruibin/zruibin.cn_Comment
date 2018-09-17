@@ -6,54 +6,6 @@
  */
 
 
-var data = [
-        {   "uuid":"werwfwwsdfsfdsfds",
-            "name": "zruibin", 
-            "content":"121212121", 
-            "time":"2018-01-11 10:22",
-            "replyList":[
-                {"uuid":"werwfwwsdfsfdsf111", "name": "zruibin", "content":"121212121", "time":"2018-01-11 10:22"},
-                {"uuid":"werwfwwsdfsfdsvs22", "name": "zruibin", "content":"133331", "time":"2018-01-11 10:22"},
-                {"uuid":"w11111fdsfds", "name": "zruibin", "content":"125555521", "time":"2018-01-11 10:22"},
-                {"uuid":"we00000sfds", "name": "zruibin", "content":"56666666666661", "time":"2018-01-11 10:22"},
-            ]
-        },
-
-        {
-            "uuid":"werwfww-----fds",
-            "name": "zruibin", 
-            "content":"为了进一步激发你的学习欲望, 我们想让你先看一下 TensorFlow 是如何解决一个经典的机器 学习问题的. 在神经网络领域, 最为经典的问题莫过于 MNIST 手写数字分类问题. 我们准备了 两篇不同的教程, 分别面向机器学习领域的初学者和专家. 如果你已经使用其它软件训练过许多 MNIST 模型, 请阅读高级教程 (红色药丸链接). 如果你以前从未听说过 MNIST, 请阅读初级教程 (蓝色药丸链接). 如果你的水平介于这两类人之间, 我们建议你先快速浏览初级教程, 然后再阅读高级教程", 
-            "time":"2018-01-11 10:22",
-            "replyList":[
-                {"uuid":"999999fsfdsds", "name": "zruibin", "content":"121212121", "time":"2018-01-11 10:22"},
-                {"uuid":"77666sfdsd", "name": "zruibin", "content":"133331", "time":"2018-01-11 10:22"},
-            ]
-        },
-
-        {
-            "uuid":"1122fff",
-            "name": "zruibin", 
-            "content":"121212121如何阅读一本书？如何阅读一本书？", 
-            "time":"2018-01-11 10:22",
-            "replyList":[
-                {"uuid":"44dsfsvvvbnnm", "name": "zruibin", "content":"如何阅读一本书？如何阅读一本书？如何阅读一本书？如何阅读一本书？", "time":"2018-01-11 10:22"},
-                {"uuid":"mmmlll11", "name": "zruibin", "content":"如何阅读一本书？如何阅读一本书？", "time":"2018-01-11 10:22"},
-            ]
-        },
-
-        {
-            "uuid":"xxxxx1111",
-            "name": "zruibin", 
-            "content":"如何阅读一本书？如何阅读一本书？", 
-            "time":"2018-01-11 10:22",
-            "replyList":[]
-        },
-    ];
-
-
-
-showComment(data);
-
 function showComment(data) {
     var commentDiv = document.getElementById("comment");
     comments = getComments(data);
@@ -72,20 +24,20 @@ function getComments (data) {
 
 function getComment (comment) {
     var uuid = comment["uuid"];
-    var name = comment["name"];
+    var nickname = comment["nickname"];
     var content = comment["content"];
     var time = comment["time"];
     var replyList = comment["replyList"];
 
     var html = '<article><hr>';
 
-    html += '<p><span class="comment_name">' + name +'：</span>' + content 
+    html += '<p><span class="comment_name">' + nickname +'：</span>' + content 
                     + '<br><span class="comment_time">' + time + '</span></p><a id="' + 
                     uuid + '" onClick="showCommentBox(\'' + uuid +'\');">评论</a>';
 
     for (var i = 0; i < replyList.length; i++) {
         reply = replyList[i]
-        replyComment = getReplyComment(reply["name"], reply["content"], reply["time"]);
+        replyComment = getReplyComment(reply["nickname"], reply["content"], reply["time"]);
         html += replyComment;
     };
 
@@ -102,7 +54,7 @@ function getReplyComment (name, content, time) {
 
 function getCommentPages (pre, next) {
     var html = '<div class="comment_pagelist"><ul>'
-    html += '<li><a href="#">«</a></li><li><a href="#">»</a></li>';
+    html += '<li><a onClick="preAction();">«</a></li><li><a onClick="nextAction();">»</a></li>';
     html += '</ui></div>';
     return html;
 }
@@ -151,6 +103,26 @@ function insertAfter(newElement, targetElement) {
     }
 }
 
+function preAction() {
+    pageIndex--;
+    if (pageIndex<1) { pageIndex = 1;}
+    requestData();
+}
+
+function nextAction() {
+    pageIndex++;
+    requestData();
+}
+
+function clearComment() {
+    var target = document.getElementById("globeCommentBox");
+    var textarea = target.getElementsByTagName("textarea");
+    var input = target.getElementsByTagName("input");
+    textarea[0].value = "";
+    input[0].value = "";
+    input[1].value = "";
+}
+
 function sendComment () {
     var target = document.getElementById("globeCommentBox");
     var textarea = target.getElementsByTagName("textarea");
@@ -158,7 +130,7 @@ function sendComment () {
     var content = textarea[0].value;
     var nickname = input[0].value;
     var email = input[1].value;
-    console.log(content, nickname, email);
+    requestAddComment(content, nickname, email);
 }
 
 function sendReplyComment (commentId) {
@@ -175,9 +147,84 @@ function sendReplyComment (commentId) {
     var content = textarea[0].value;
     var nickname = input[0].value;
     var email = input[1].value;
-    console.log(content, nickname, email);
-    showCommentBox(commentId);
+    requestAddReplyComment(commentId, content, nickname, email);
 }
+
+
+// --------------------------------------------------------
+
+
+function requestData() {
+    var url = "/service/comment/query";
+    // console.log(url);
+    reqwest({
+        url: url, 
+        type: 'json', 
+        method: 'get',
+        data: { 
+            article_uuid: articleUUID,
+            index: pageIndex
+        }
+    }).then(function (response) {
+        // console.log(response);
+        clearComment();
+        showComment(response.data);
+    }).fail(function (err, msg) {
+        console.log(err);
+        toast("请求失败，请重新刷新！");
+    });
+}
+
+
+requestData();
+
+function requestAddComment(content, nickname, email) {
+    var url = "/service/comment/insertComment";
+    // console.log(articleUUID, content, nickname, email);
+    reqwest({
+        url: url, 
+        type: 'json', 
+        method: 'post',
+        data: { 
+            article_uuid: articleUUID,
+            content: content,
+            nickname: nickname,
+            email: email
+        }
+    }).then(function (response) {
+        // console.log(response);
+        pageIndex = 1;
+        requestData();
+    }).fail(function (err, msg) {
+        console.log(err);
+        toast("请求失败，请重新刷新！");
+    });
+}
+
+function requestAddReplyComment(commentUUID, content, nickname, email) {
+    var url = "/service/comment/insertReplyComment";
+    // console.log(commentUUID, content, nickname, email);
+    reqwest({
+        url: url, 
+        type: 'json', 
+        method: 'post',
+        data: { 
+            comment_uuid: commentUUID,
+            article_uuid: articleUUID,
+            content: content,
+            nickname: nickname,
+            email: email
+        }
+    }).then(function (response) {
+        // console.log(response);
+        showCommentBox(commentUUID);
+        requestData();
+    }).fail(function (err, msg) {
+        console.log(err);
+        toast("请求失败，请重新刷新！");
+    });
+}
+
 
 
 
