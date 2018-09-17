@@ -27,6 +27,7 @@ from config import *
 import register
 from common.tools import jsonTool
 import Log
+from SQLiteDB import SQLiteDBManager
 
 
 app = Flask(__name__)
@@ -40,6 +41,10 @@ app.config['DEBUG'] = Config.DEBUG
 # 设置日志
 Log.setDebug(Config.DEBUG)
 Log.setLogDir(Config.LOG_DIR)
+
+#设置sqlite数据库路径
+SQLiteDBManager.shareInstanced().setDBPath(Config.SQLiteDB)
+    
 
 # 注册模块
 register.registerBlueprint(app)

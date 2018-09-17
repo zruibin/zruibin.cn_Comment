@@ -32,6 +32,8 @@ class Config(object):
   DBCHAR = "utf8"
   DBPOOLSIZE = 10
 
+  SQLiteDB = "../DB/database.db" if DEBUG else "./database.db"
+
   CACHE_DB = "redis"
   CACHE_HOST = DBHOST
   CACHE_PORT = 6379
